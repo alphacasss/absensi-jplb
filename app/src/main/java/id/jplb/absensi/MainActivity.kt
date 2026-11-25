@@ -67,6 +67,16 @@ class MainActivity : AppCompatActivity() {
         updateStatus()
 
         tvUpdateStatus.setOnClickListener { checkForUpdate(false) }
+        // Tersembunyi untuk pengguna biasa; tahan lama teks versi untuk membuka.
+        tvUpdateStatus.setOnLongClickListener {
+            val prefs = getSharedPreferences("absensi_jplb", MODE_PRIVATE)
+            val enabled = !prefs.getBoolean("dev_mode", false)
+            prefs.edit().putBoolean("dev_mode", enabled).apply()
+            applyDevMode()
+            toast(if (enabled) "Mode pengembang aktif" else "Mode pengembang nonaktif")
+            true
+        }
+        applyDevMode()
         checkForUpdate(true)
 
         findViewById<View>(R.id.btnOpen).setOnClickListener { openAbsensi() }
@@ -84,6 +94,13 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         updateStatus()
+        applyDevMode()
+    }
+
+    private fun applyDevMode() {
+        val dev = getSharedPreferences("absensi_jplb", MODE_PRIVATE)
+            .getBoolean("dev_mode", false)
+        findViewById<View>(R.id.btnMock).visibility = if (dev) View.VISIBLE else View.GONE
     }
 
     private fun isInstalled(packageName: String): Boolean {

@@ -37,7 +37,7 @@ Fitur ini diadaptasi dari [lilstiffy/MockGps](https://github.com/lilstiffy/MockG
 `LocationManager.addTestProvider()` + `setTestProviderLocation()` dari foreground service untuk provider **GPS dan Network**,
 
 tanpa Google Maps/API key. Pemilih peta memakai osmdroid + tile OpenStreetMap, pencarian nama tempat via Nominatim. Cara pakai:
-1. Buka menu **Atur Lokasi Virtual** di home.
+1. Fitur ini tersembunyi untuk pengguna biasa. Aktifkan **mode pengembang** dengan menekan lama teks status versi di home selama ±1 detik, lalu menu **Atur Lokasi Virtual** akan muncul.
 2. Isi latitude & longitude manual, atau tekan **Pilih di Peta** untuk memilih titik/ketik nama tempat (pencarian Nominatim, OpenStreetMap tanpa API key).
    - Tekan **Simpan** untuk menyimpan titik sebagai lokasi favorit (disimpan lokal).
    - Chip favorit sekali klik langsung dipakai; long-press chip untuk menghapus.
