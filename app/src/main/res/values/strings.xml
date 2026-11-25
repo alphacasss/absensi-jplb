@@ -59,4 +59,9 @@
     <string name="update_downloading">Mengunduh update…</string>
     <string name="update_no_apk">File APK tidak ditemukan di release</string>
     <string name="update_install_permission">Izinkan instal aplikasi unknown source untuk melanjutkan</string>
+    <string name="tile_label">Lokasi Virtual</string>
+    <string name="tile_on">Matikan Lokasi</string>
+    <string name="tile_off">Lokasi Virtual</string>
+    <string name="tile_permission">Izin lokasi belum ada</string>
+    <string name="notif_stop">Matikan</string>
 </resources>

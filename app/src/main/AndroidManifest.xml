@@ -61,6 +61,17 @@
             android:windowSoftInputMode="adjustResize" />
 
         <service
+            android:name=".MockTileService"
+            android:icon="@drawable/ic_home"
+            android:label="@string/tile_label"
+            android:exported="true"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <service
             android:name=".MockLocationService"
             android:enabled="true"
             android:exported="false"

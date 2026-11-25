@@ -1,6 +1,7 @@
 package id.jplb.absensi
 
 import android.app.AlertDialog
+import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -101,6 +102,14 @@ class MainActivity : AppCompatActivity() {
         val dev = getSharedPreferences("absensi_jplb", MODE_PRIVATE)
             .getBoolean("dev_mode", false)
         findViewById<View>(R.id.btnMock).visibility = if (dev) View.VISIBLE else View.GONE
+        val tile = ComponentName(this, MockTileService::class.java)
+        val state = if (dev)
+            PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+        else
+            PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+        packageManager.setComponentEnabledSetting(
+            tile, state, PackageManager.DONT_KILL_APP
+        )
     }
 
     private fun isInstalled(packageName: String): Boolean {

@@ -41,6 +41,8 @@ tanpa Google Maps/API key. Pemilih peta memakai osmdroid + tile OpenStreetMap, p
 2. Isi latitude & longitude manual, atau tekan **Pilih di Peta** untuk memilih titik/ketik nama tempat (pencarian Nominatim, OpenStreetMap tanpa API key).
    - Tekan **Simpan** untuk menyimpan titik sebagai lokasi favorit (disimpan lokal).
    - Chip favorit sekali klik langsung dipakai; long-press chip untuk menghapus.
+   - Quick Settings: tambahkan tile **Lokasi Virtual** lewat tombol pensil → Add a control untuk menyalakan/memativikan tanpa membuka aplikasi.
+   - Notifikasi saat aktif memiliki tombol **Matikan**.
 3. Jika diminta, di *Developer options → Mock location app / Select mock location app*, pilih aplikasi ini.
 4. Tekan **Hentikan Mock** untuk kembali ke GPS asli.
 

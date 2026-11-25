@@ -7,6 +7,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
+import android.content.ComponentName
 import android.content.Intent
 import android.location.Criteria
 import android.location.Location
@@ -131,6 +132,7 @@ class MockLocationService : Service() {
                 removeProviderSafe(LocationManager.NETWORK_PROVIDER)
                 running = false
                 isRunning = false
+                MockTileService.requestUpdate(this@MockLocationService)
             }
         }.also { it.start() }
     }
@@ -142,6 +144,7 @@ class MockLocationService : Service() {
         removeProviderSafe(LocationManager.GPS_PROVIDER)
         removeProviderSafe(LocationManager.NETWORK_PROVIDER)
         isRunning = false
+        MockTileService.requestUpdate(this)
     }
 
     @SuppressLint("MissingPermission")
@@ -198,6 +201,17 @@ class MockLocationService : Service() {
             .setContentTitle(getString(R.string.mock_notif_title))
             .setContentText("$lat, $lng")
             .setContentIntent(pi)
+            .addAction(
+                R.drawable.ic_close,
+                getString(R.string.notif_stop),
+                PendingIntent.getService(
+                    this, 2,
+                    Intent(this, MockLocationService::class.java).apply {
+                        action = ACTION_STOP
+                    },
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                )
+            )
             .setOngoing(true)
             .build()
     }
