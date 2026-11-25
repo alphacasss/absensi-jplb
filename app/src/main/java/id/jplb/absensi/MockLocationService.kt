@@ -21,7 +21,10 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 
-/** Foreground service yang menyuntikkan lokasi uji ke provider GPS sistem. */
+/**
+ * Menyuntikkan lokasi uji ke provider GPS dan Network.
+ * Pendekatan mengikuti FakeTraveler / Android-Mock-Location (GPL).
+ */
 class MockLocationService : Service() {
 
     companion object {
@@ -80,18 +83,35 @@ class MockLocationService : Service() {
         isRunning = true
         mockThread = Thread {
             try {
-                addTestProvider()
+                addTestProvider(LocationManager.GPS_PROVIDER, fine = true)
+                addTestProvider(LocationManager.NETWORK_PROVIDER, fine = false)
                 locationManager.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true)
+                locationManager.setTestProviderEnabled(LocationManager.NETWORK_PROVIDER, true)
+
                 while (running) {
-                    val loc = Location(LocationManager.GPS_PROVIDER).apply {
+                    val now = System.currentTimeMillis()
+                    val elapsed = SystemClock.elapsedRealtimeNanos()
+                    val gpsLoc = Location(LocationManager.GPS_PROVIDER).apply {
                         latitude = lat
                         longitude = lng
                         accuracy = 5f
                         altitude = 12.5
-                        time = System.currentTimeMillis()
-                        elapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos()
+                        time = now
+                        elapsedRealtimeNanos = elapsed
                     }
-                    locationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, loc)
+                    val netLoc = Location(LocationManager.NETWORK_PROVIDER).apply {
+                        latitude = lat
+                        longitude = lng
+                        accuracy = 20f
+                        time = now
+                        elapsedRealtimeNanos = elapsed
+                    }
+                    locationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, gpsLoc)
+                    try {
+                        locationManager.setTestProviderLocation(LocationManager.NETWORK_PROVIDER, netLoc)
+                    } catch (e: Exception) {
+                        Log.d(TAG, "network provider: ${e.message}")
+                    }
                     Thread.sleep(200)
                 }
             } catch (se: SecurityException) {
@@ -102,7 +122,8 @@ class MockLocationService : Service() {
             } catch (e: Exception) {
                 Log.e(TAG, "Mock location error", e)
             } finally {
-                removeProviderSafe()
+                removeProviderSafe(LocationManager.GPS_PROVIDER)
+                removeProviderSafe(LocationManager.NETWORK_PROVIDER)
                 running = false
                 isRunning = false
             }
@@ -113,35 +134,37 @@ class MockLocationService : Service() {
         running = false
         mockThread?.interrupt()
         mockThread = null
-        removeProviderSafe()
+        removeProviderSafe(LocationManager.GPS_PROVIDER)
+        removeProviderSafe(LocationManager.NETWORK_PROVIDER)
         isRunning = false
     }
 
     @SuppressLint("MissingPermission")
-    private fun addTestProvider() {
+    private fun addTestProvider(provider: String, fine: Boolean) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val props = ProviderProperties.Builder()
-                .setPowerUsage(ProviderProperties.POWER_USAGE_HIGH)
-                .setAccuracy(ProviderProperties.ACCURACY_FINE)
+                .setPowerUsage(if (fine) ProviderProperties.POWER_USAGE_HIGH else ProviderProperties.POWER_USAGE_LOW)
+                .setAccuracy(if (fine) ProviderProperties.ACCURACY_FINE else ProviderProperties.ACCURACY_COARSE)
                 .setHasNetworkRequirement(true)
                 .build()
-            locationManager.addTestProvider(LocationManager.GPS_PROVIDER, props)
+            locationManager.addTestProvider(provider, props)
         } else {
             @Suppress("DEPRECATION")
             locationManager.addTestProvider(
-                LocationManager.GPS_PROVIDER,
-                true, false, false, false, true, true, true,
-                Criteria.POWER_HIGH, Criteria.ACCURACY_FINE
+                provider,
+                true, false, false, false, fine, fine, fine,
+                if (fine) Criteria.POWER_HIGH else Criteria.POWER_LOW,
+                if (fine) Criteria.ACCURACY_FINE else Criteria.ACCURACY_COARSE
             )
         }
     }
 
     @SuppressLint("MissingPermission")
-    private fun removeProviderSafe() {
+    private fun removeProviderSafe(provider: String) {
         try {
-            locationManager.removeTestProvider(LocationManager.GPS_PROVIDER)
+            locationManager.removeTestProvider(provider)
         } catch (e: Exception) {
-            Log.d(TAG, "removeTestProvider: ${e.message}")
+            Log.d(TAG, "removeTestProvider($provider): ${e.message}")
         }
     }
 

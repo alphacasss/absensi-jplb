@@ -33,8 +33,8 @@ Menu ⋮ → **Ganti URL** → masukkan URL deployment baru → Simpan. Tombol *
 Package: `id.jplb.absensi`
 
 ## Mode Uji — Mock Location (v1.2.0)
-Fitur ini diadaptasi dari pendekatan [lilstiffy/MockGps](https://github.com/lilstiffy/MockGps):
-`LocationManager.addTestProvider()` + `setTestProviderLocation()` dari foreground service,
+Fitur ini diadaptasi dari [lilstiffy/MockGps](https://github.com/lilstiffy/MockGps), [FakeTraveler](https://github.com/mcastillof/FakeTraveler), dan [Android-Mock-Location](https://github.com/warren-bank/Android-Mock-Location):
+`LocationManager.addTestProvider()` + `setTestProviderLocation()` dari foreground service untuk provider **GPS dan Network**,
 
 tanpa Google Maps/API key. Pemilih peta memakai osmdroid + tile OpenStreetMap, pencarian nama tempat via Nominatim. Cara pakai:
 1. Buka menu **Mode Uji (Mock Location)** di home.
