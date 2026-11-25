@@ -49,4 +49,14 @@
     <string name="fav_save">Simpan</string>
     <string name="fav_name_hint">Nama lokasi, mis. Gudang</string>
     <string name="fav_save_title">Simpan lokasi favorit</string>
+    <string name="update_check">Cek Update</string>
+    <string name="update_checking">Mengecek versi terbaru…</string>
+    <string name="update_latest">Versi terbaru: %1$s</string>
+    <string name="update_available">Update tersedia: %1$s (ketuk untuk unduh)</string>
+    <string name="update_failed">Gagal mengecek update</string>
+    <string name="update_title">Update tersedia</string>
+    <string name="update_download">Unduh &amp; Pasang</string>
+    <string name="update_downloading">Mengunduh update…</string>
+    <string name="update_no_apk">File APK tidak ditemukan di release</string>
+    <string name="update_install_permission">Izinkan instal aplikasi unknown source untuk melanjutkan</string>
 </resources>

@@ -192,9 +192,21 @@
                 android:textColor="@color/error" />
 
             <TextView
+                android:id="@+id/tvUpdateStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:gravity="center"
+                android:text="@string/update_checking"
+                android:textColor="@color/primary"
+                android:textSize="13sp"
+                android:background="?attr/selectableItemBackground"
+                android:padding="8dp" />
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:text="@string/note_chrome"
                 android:textColor="@color/text_dim"
                 android:textSize="12sp"

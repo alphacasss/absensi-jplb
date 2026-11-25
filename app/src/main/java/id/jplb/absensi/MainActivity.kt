@@ -6,17 +6,22 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import com.google.android.material.appbar.MaterialToolbar
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,6 +29,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var statusText: TextView
     private lateinit var browserText: TextView
     private lateinit var authDescText: TextView
+    private lateinit var tvUpdateStatus: TextView
+    private var pendingApk: File? = null
+
+    private val installSettings = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        pendingApk?.let { file -> installApk(file) }
+    }
 
     private val chromePackages = listOf(
         "com.android.chrome",
@@ -40,9 +53,11 @@ class MainActivity : AppCompatActivity() {
         statusText = findViewById(R.id.statusText)
         browserText = findViewById(R.id.browserText)
         authDescText = findViewById(R.id.authDesc)
+        tvUpdateStatus = findViewById(R.id.tvUpdateStatus)
 
         toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
+                R.id.action_check_update -> { checkForUpdate(false); true }
                 R.id.action_change_url -> { showUrlDialog(); true }
                 R.id.action_about -> { showAbout(); true }
                 else -> false
@@ -50,6 +65,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         updateStatus()
+
+        tvUpdateStatus.setOnClickListener { checkForUpdate(false) }
+        checkForUpdate(true)
 
         findViewById<View>(R.id.btnOpen).setOnClickListener { openAbsensi() }
         findViewById<View>(R.id.btnBrowser).setOnClickListener {
@@ -174,6 +192,98 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         } catch (e: Exception) {
             toast("Browser tidak tersedia")
+        }
+    }
+
+    private fun checkForUpdate(auto: Boolean) {
+        tvUpdateStatus.setText(R.string.update_checking)
+        Thread {
+            try {
+                val info = UpdateChecker.fetchLatest()
+                val newer = UpdateChecker.isNewer(info.tag, BuildConfig.VERSION_NAME)
+                runOnUiThread {
+                    if (newer) {
+                        tvUpdateStatus.text = getString(R.string.update_available, info.tag)
+                        if (!auto) showUpdateDialog(info)
+                    } else {
+                        tvUpdateStatus.text = getString(R.string.update_latest, BuildConfig.VERSION_NAME)
+                        if (!auto) toast("Sudah versi terbaru")
+                    }
+                }
+            } catch (e: Exception) {
+                runOnUiThread {
+                    tvUpdateStatus.setText(R.string.update_failed)
+                    if (!auto) toast("Gagal mengecek update: ${e.message}")
+                }
+            }
+        }.start()
+    }
+
+    private fun showUpdateDialog(info: UpdateChecker.ReleaseInfo) {
+        val sizeMb = if (info.size > 0) "%.1f MB".format(info.size / 1024f / 1024f) else "-"
+        val message = buildString {
+            append(info.notes.ifBlank { "Pembaruan tersedia dari GitHub Release." })
+            append("\n\nUkuran: ").append(sizeMb)
+        }
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.update_title) + " " + info.tag)
+            .setMessage(message)
+            .setPositiveButton(R.string.update_download) { _, _ -> downloadUpdate(info) }
+            .setNegativeButton("Nanti", null)
+            .show()
+    }
+
+    private fun downloadUpdate(info: UpdateChecker.ReleaseInfo) {
+        val url = info.apkUrl
+        if (url.isNullOrBlank()) {
+            toast(getString(R.string.update_no_apk))
+            return
+        }
+        toast(getString(R.string.update_downloading))
+        Thread {
+            try {
+                val dir = File(getExternalFilesDir("apk"), "update").apply { mkdirs() }
+                val file = File(dir, "app-release-${info.tag}.apk")
+                val conn = java.net.URL(url).openConnection() as java.net.HttpURLConnection
+                conn.connectTimeout = 15000
+                conn.readTimeout = 30000
+                conn.inputStream.use { input ->
+                    file.outputStream().use { output -> input.copyTo(output) }
+                }
+                runOnUiThread {
+                    pendingApk = file
+                    startInstall(file)
+                }
+            } catch (e: Exception) {
+                runOnUiThread { toast("Gagal mengunduh: ${e.message}") }
+            }
+        }.start()
+    }
+
+    private fun startInstall(file: File) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !packageManager.canRequestPackageInstalls()) {
+            toast(getString(R.string.update_install_permission))
+            val intent = Intent(
+                Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+                Uri.parse("package:$packageName")
+            )
+            installSettings.launch(intent)
+            return
+        }
+        installApk(file)
+    }
+
+    private fun installApk(file: File) {
+        val uri = FileProvider.getUriForFile(this, "$packageName.fileprovider", file)
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(uri, "application/vnd.android.package-archive")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        try {
+            startActivity(intent)
+        } catch (e: Exception) {
+            toast("Gagal membuka installer: ${e.message}")
         }
     }
 

@@ -45,3 +45,10 @@ tanpa Google Maps/API key. Pemilih peta memakai osmdroid + tile OpenStreetMap, p
 4. Tekan **Hentikan Mock** untuk kembali ke GPS asli.
 
 Catatan: ini hanya untuk pengujian fitur berbasis lokasi. Jangan dipakai untuk memalsukan data absensi.
+
+## OTA Update (GitHub Release)
+Aplikasi otomatis mengecek `https://api.github.com/repos/alphacasss/absensi-jplb/releases/latest` saat dibuka.
+- Jika ada tag lebih baru, muncul status **Update tersedia** (bisa juga lewat menu ⋮ → Cek Update).
+- Tekan status/dialog untuk mengunduh aset `.apk` dari release, lalu pasang lewat FileProvider.
+- Android 8+ akan meminta izin *Install unknown apps* jika belum diberikan.
+- Debug dan release ditandatangani dengan keystore yang sama agar OTA bisa menggantikan versi terpasang.
