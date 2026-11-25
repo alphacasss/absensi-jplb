@@ -58,8 +58,13 @@ class MockLocationService : Service() {
             ACTION_START -> {
                 lat = intent.getDoubleExtra(EXTRA_LAT, lat)
                 lng = intent.getDoubleExtra(EXTRA_LNG, lng)
-                startForeground(NOTIFICATION_ID, buildNotification())
-                startMock()
+                try {
+                    startForeground(NOTIFICATION_ID, buildNotification())
+                    startMock()
+                } catch (e: SecurityException) {
+                    Log.e(TAG, "Gagal start foreground", e)
+                    stopSelf()
+                }
             }
             ACTION_STOP -> {
                 stopMock()
@@ -102,7 +107,7 @@ class MockLocationService : Service() {
                     val netLoc = Location(LocationManager.NETWORK_PROVIDER).apply {
                         latitude = lat
                         longitude = lng
-                        accuracy = 20f
+                        accuracy = 5f
                         time = now
                         elapsedRealtimeNanos = elapsed
                     }
@@ -112,11 +117,11 @@ class MockLocationService : Service() {
                     } catch (e: Exception) {
                         Log.d(TAG, "network provider: ${e.message}")
                     }
-                    Thread.sleep(200)
+                    Thread.sleep(500)
                 }
             } catch (se: SecurityException) {
                 Log.e(TAG, "Mock location ditolak", se)
-                notifyOnMain("Mock location gagal. Pilih aplikasi ini di Developer options → Mock location app.")
+                notifyOnMain("Lokasi virtual gagal. Pilih aplikasi ini di Developer options → Mock location app.")
             } catch (e: InterruptedException) {
                 Thread.currentThread().interrupt()
             } catch (e: Exception) {

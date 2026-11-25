@@ -22,9 +22,21 @@ class MockLocationActivity : AppCompatActivity() {
     private lateinit var tvStatus: TextView
     private val prefs by lazy { getSharedPreferences("absensi_jplb", Context.MODE_PRIVATE) }
 
+    private var pendingStart: Pair<Double, Double>? = null
+
     private val requestLocation = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
-    ) { }
+    ) { result ->
+        if (result.values.all { it }) {
+            pendingStart?.let { (lat, lng) ->
+                pendingStart = null
+                doStart(lat, lng)
+            }
+        } else {
+            pendingStart = null
+            Toast.makeText(this, "Izin lokasi diperlukan untuk mengaktifkan lokasi virtual", Toast.LENGTH_LONG).show()
+        }
+    }
 
     private val requestNotifications = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -78,12 +90,7 @@ class MockLocationActivity : AppCompatActivity() {
                 PackageManager.PERMISSION_GRANTED
     }
 
-    private fun ensurePermissions() {
-        if (!hasLocationPermission()) {
-            requestLocation.launch(
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-            )
-        }
+    private fun ensureNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
         ) {
@@ -98,15 +105,30 @@ class MockLocationActivity : AppCompatActivity() {
             Toast.makeText(this, "Latitude -90..90, longitude -180..180", Toast.LENGTH_LONG).show()
             return
         }
-        ensurePermissions()
+        ensureNotificationPermission()
+        if (!hasLocationPermission()) {
+            pendingStart = lat to lng
+            requestLocation.launch(
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+            )
+            return
+        }
+        doStart(lat, lng)
+    }
+
+    private fun doStart(lat: Double, lng: Double) {
         prefs.edit().putString("mock_lat", lat.toString()).putString("mock_lng", lng.toString()).apply()
         val intent = Intent(this, MockLocationService::class.java).apply {
             action = MockLocationService.ACTION_START
             putExtra(MockLocationService.EXTRA_LAT, lat)
             putExtra(MockLocationService.EXTRA_LNG, lng)
         }
-        ContextCompat.startForegroundService(this, intent)
-        tvStatus.setText(R.string.mock_status_on)
+        try {
+            ContextCompat.startForegroundService(this, intent)
+            tvStatus.setText(R.string.mock_status_on)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Gagal mengaktifkan: ${e.message}", Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun stopMock() {

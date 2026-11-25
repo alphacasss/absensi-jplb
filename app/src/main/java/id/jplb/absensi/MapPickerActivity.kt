@@ -19,8 +19,11 @@ import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
+import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.MapEventsOverlay
+import org.osmdroid.views.overlay.compass.CompassOverlay
+import org.osmdroid.views.overlay.ScaleBarOverlay
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
@@ -53,7 +56,19 @@ class MapPickerActivity : AppCompatActivity() {
 
         map.setTileSource(TileSourceFactory.MAPNIK)
         map.setMultiTouchControls(true)
+        map.setBuiltInZoomControls(true)
+        map.zoomController.setVisibility(CustomZoomButtonsController.Visibility.ALWAYS)
         map.controller.setZoom(16.0)
+
+        val compass = CompassOverlay(this, map)
+        compass.enableCompass()
+        map.overlays.add(compass)
+
+        val scaleBar = ScaleBarOverlay(map).apply {
+            setCentred(true)
+            setScaleBarOffset(resources.displayMetrics.widthPixels / 2, 24)
+        }
+        map.overlays.add(scaleBar)
         val start = GeoPoint(
             intent.getDoubleExtra("lat", -8.55),
             intent.getDoubleExtra("lng", 116.55)
