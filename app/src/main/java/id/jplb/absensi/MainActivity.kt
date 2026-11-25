@@ -58,6 +58,9 @@ class MainActivity : AppCompatActivity() {
         findViewById<View>(R.id.btnWebView).setOnClickListener {
             startActivity(Intent(this, WebActivity::class.java))
         }
+        findViewById<View>(R.id.btnMock).setOnClickListener {
+            startActivity(Intent(this, MockLocationActivity::class.java))
+        }
     }
 
     override fun onResume() {

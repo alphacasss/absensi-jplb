@@ -31,3 +31,15 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 Menu ⋮ → **Ganti URL** → masukkan URL deployment baru → Simpan. Tombol **Reset** kembali ke URL bawaan.
 
 Package: `id.jplb.absensi`
+
+## Mode Uji — Mock Location (v1.1.0)
+Fitur ini diadaptasi dari pendekatan [lilstiffy/MockGps](https://github.com/lilstiffy/MockGps):
+`LocationManager.addTestProvider()` + `setTestProviderLocation()` dari foreground service,
+
+tanpa Google Maps/API key. Cara pakai:
+1. Buka menu **Mode Uji (Mock Location)** di home.
+2. Isi latitude & longitude, tekan **Mulai Mock**.
+3. Jika diminta, di *Developer options → Mock location app / Select mock location app*, pilih aplikasi ini.
+4. Tekan **Hentikan Mock** untuk kembali ke GPS asli.
+
+Catatan: ini hanya untuk pengujian fitur berbasis lokasi. Jangan dipakai untuk memalsukan data absensi.
