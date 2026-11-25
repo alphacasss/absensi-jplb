@@ -40,4 +40,10 @@
     <string name="mock_status_off">Status: nonaktif</string>
     <string name="mock_instruction">Agar lokasi uji terbaca aplikasi lain: buka Developer options → Mock location app/Select mock location app → pilih aplikasi ini. Lokasi akan dikirim ke sistem setiap 200 ms.</string>
     <string name="mock_notif_title">Mock location aktif</string>
+    <string name="map_title">Pilih Lokasi di Peta</string>
+    <string name="map_search_hint">Cari nama tempat, mis. Mataram</string>
+    <string name="map_search">Cari</string>
+    <string name="map_use">Pakai Lokasi Ini</string>
+    <string name="map_selected">Lokasi dipilih</string>
+    <string name="mock_pick_map">Pilih di Peta</string>
 </resources>

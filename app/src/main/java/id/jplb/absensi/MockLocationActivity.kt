@@ -30,6 +30,16 @@ class MockLocationActivity : AppCompatActivity() {
         ActivityResultContracts.RequestPermission()
     ) { }
 
+    private val pickLocation = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val data = result.data ?: return@registerForActivityResult
+            etLat.setText(data.getDoubleExtra("lat", 0.0).toString())
+            etLng.setText(data.getDoubleExtra("lng", 0.0).toString())
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mock)
@@ -42,6 +52,13 @@ class MockLocationActivity : AppCompatActivity() {
         etLat.setText(prefs.getString("mock_lat", "-8.5500"))
         etLng.setText(prefs.getString("mock_lng", "116.5500"))
 
+        findViewById<View>(R.id.btnPickMap).setOnClickListener {
+            val intent = Intent(this, MapPickerActivity::class.java).apply {
+                putExtra("lat", etLat.text.toString().toDoubleOrNull() ?: -8.55)
+                putExtra("lng", etLng.text.toString().toDoubleOrNull() ?: 116.55)
+            }
+            pickLocation.launch(intent)
+        }
         findViewById<View>(R.id.btnStartMock).setOnClickListener { startMock() }
         findViewById<View>(R.id.btnStopMock).setOnClickListener { stopMock() }
         updateStatus()

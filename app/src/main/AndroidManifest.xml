@@ -41,6 +41,10 @@
         </activity>
 
         <activity
+            android:name=".MapPickerActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".MockLocationActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />

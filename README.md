@@ -32,13 +32,13 @@ Menu ⋮ → **Ganti URL** → masukkan URL deployment baru → Simpan. Tombol *
 
 Package: `id.jplb.absensi`
 
-## Mode Uji — Mock Location (v1.1.0)
+## Mode Uji — Mock Location (v1.2.0)
 Fitur ini diadaptasi dari pendekatan [lilstiffy/MockGps](https://github.com/lilstiffy/MockGps):
 `LocationManager.addTestProvider()` + `setTestProviderLocation()` dari foreground service,
 
-tanpa Google Maps/API key. Cara pakai:
+tanpa Google Maps/API key. Pemilih peta memakai osmdroid + tile OpenStreetMap, pencarian nama tempat via Nominatim. Cara pakai:
 1. Buka menu **Mode Uji (Mock Location)** di home.
-2. Isi latitude & longitude, tekan **Mulai Mock**.
+2. Isi latitude & longitude manual, atau tekan **Pilih di Peta** untuk memilih titik/ketik nama tempat (pencarian Nominatim, OpenStreetMap tanpa API key).
 3. Jika diminta, di *Developer options → Mock location app / Select mock location app*, pilih aplikasi ini.
 4. Tekan **Hentikan Mock** untuk kembali ke GPS asli.
 
