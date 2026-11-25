@@ -32,19 +32,19 @@ Menu ⋮ → **Ganti URL** → masukkan URL deployment baru → Simpan. Tombol *
 
 Package: `id.jplb.absensi`
 
-## Mode Uji — Mock Location (v1.2.0)
+## Lokasi Virtual (v1.2.4)
 Fitur ini diadaptasi dari [lilstiffy/MockGps](https://github.com/lilstiffy/MockGps), [FakeTraveler](https://github.com/mcastillof/FakeTraveler), dan [Android-Mock-Location](https://github.com/warren-bank/Android-Mock-Location):
 `LocationManager.addTestProvider()` + `setTestProviderLocation()` dari foreground service untuk provider **GPS dan Network**,
 
 tanpa Google Maps/API key. Pemilih peta memakai osmdroid + tile OpenStreetMap, pencarian nama tempat via Nominatim. Cara pakai:
-1. Buka menu **Mode Uji (Mock Location)** di home.
+1. Buka menu **Atur Lokasi Virtual** di home.
 2. Isi latitude & longitude manual, atau tekan **Pilih di Peta** untuk memilih titik/ketik nama tempat (pencarian Nominatim, OpenStreetMap tanpa API key).
    - Tekan **Simpan** untuk menyimpan titik sebagai lokasi favorit (disimpan lokal).
    - Chip favorit sekali klik langsung dipakai; long-press chip untuk menghapus.
 3. Jika diminta, di *Developer options → Mock location app / Select mock location app*, pilih aplikasi ini.
 4. Tekan **Hentikan Mock** untuk kembali ke GPS asli.
 
-Catatan: ini hanya untuk pengujian fitur berbasis lokasi. Jangan dipakai untuk memalsukan data absensi.
+Catatan: lokasi yang dikirim adalah lokasi yang Anda pilih di peta, bukan koordinat GPS fisik perangkat. Android tetap menandai lokasi dari test provider sebagai mock (`isFromMockProvider`).
 
 ## OTA Update (GitHub Release)
 Aplikasi otomatis mengecek `https://api.github.com/repos/alphacasss/absensi-jplb/releases/latest` saat dibuka.
