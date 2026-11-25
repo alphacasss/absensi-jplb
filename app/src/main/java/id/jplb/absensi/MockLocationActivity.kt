@@ -54,6 +54,7 @@ class MockLocationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AppConfig.ensureMockDefaults(this)
         setContentView(R.layout.activity_mock)
 
         findViewById<MaterialToolbar>(R.id.toolbar).setNavigationOnClickListener { finish() }
@@ -61,13 +62,13 @@ class MockLocationActivity : AppCompatActivity() {
         etLng = findViewById(R.id.etLng)
         tvStatus = findViewById(R.id.tvMockStatus)
 
-        etLat.setText(prefs.getString("mock_lat", "-8.5500"))
-        etLng.setText(prefs.getString("mock_lng", "116.5500"))
+        etLat.setText(prefs.getString("mock_lat", AppConfig.DEFAULT_MOCK_LAT.toString()))
+        etLng.setText(prefs.getString("mock_lng", AppConfig.DEFAULT_MOCK_LNG.toString()))
 
         findViewById<View>(R.id.btnPickMap).setOnClickListener {
             val intent = Intent(this, MapPickerActivity::class.java).apply {
-                putExtra("lat", etLat.text.toString().toDoubleOrNull() ?: -8.55)
-                putExtra("lng", etLng.text.toString().toDoubleOrNull() ?: 116.55)
+                putExtra("lat", etLat.text.toString().toDoubleOrNull() ?: AppConfig.DEFAULT_MOCK_LAT)
+                putExtra("lng", etLng.text.toString().toDoubleOrNull() ?: AppConfig.DEFAULT_MOCK_LNG)
             }
             pickLocation.launch(intent)
         }

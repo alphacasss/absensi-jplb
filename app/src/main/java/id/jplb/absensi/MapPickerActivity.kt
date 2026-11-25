@@ -70,8 +70,8 @@ class MapPickerActivity : AppCompatActivity() {
         }
         map.overlays.add(scaleBar)
         val start = GeoPoint(
-            intent.getDoubleExtra("lat", -8.55),
-            intent.getDoubleExtra("lng", 116.55)
+            intent.getDoubleExtra("lat", AppConfig.DEFAULT_MOCK_LAT),
+            intent.getDoubleExtra("lng", AppConfig.DEFAULT_MOCK_LNG)
         )
         setPoint(start)
 
@@ -115,8 +115,15 @@ class MapPickerActivity : AppCompatActivity() {
     }
 
     private fun loadFavorites(): JSONArray {
+        val raw = favPrefs.getString("map_favorites", null)
+            ?: return JSONArray().put(
+                JSONObject()
+                    .put("name", AppConfig.DEFAULT_FAV_NAME)
+                    .put("lat", AppConfig.DEFAULT_MOCK_LAT)
+                    .put("lng", AppConfig.DEFAULT_MOCK_LNG)
+            )
         return try {
-            JSONArray(favPrefs.getString("map_favorites", "[]"))
+            JSONArray(raw)
         } catch (e: Exception) {
             JSONArray()
         }

@@ -37,11 +37,13 @@ class MockTileService : TileService() {
                 action = MockLocationService.ACTION_START
                 putExtra(
                     MockLocationService.EXTRA_LAT,
-                    prefs.getString("mock_lat", "-8.55")?.toDoubleOrNull() ?: -8.55
+                    prefs.getString("mock_lat", AppConfig.DEFAULT_MOCK_LAT.toString())?.toDoubleOrNull()
+                        ?: AppConfig.DEFAULT_MOCK_LAT
                 )
                 putExtra(
                     MockLocationService.EXTRA_LNG,
-                    prefs.getString("mock_lng", "116.55")?.toDoubleOrNull() ?: 116.55
+                    prefs.getString("mock_lng", AppConfig.DEFAULT_MOCK_LNG.toString())?.toDoubleOrNull()
+                        ?: AppConfig.DEFAULT_MOCK_LNG
                 )
             }
             try {
