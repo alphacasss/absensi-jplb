@@ -1,15 +1,19 @@
 package id.jplb.absensi
 
+import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.appbar.MaterialToolbar
 import org.json.JSONArray
+import org.json.JSONObject
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -31,6 +35,7 @@ class MapPickerActivity : AppCompatActivity() {
     private val results = mutableListOf<GeoPoint>()
     private val labels = mutableListOf<String>()
     private lateinit var adapter: ArrayAdapter<String>
+    private val favPrefs by lazy { getSharedPreferences("absensi_jplb", Context.MODE_PRIVATE) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +82,8 @@ class MapPickerActivity : AppCompatActivity() {
         }
 
         findViewById<View>(R.id.btnSearch).setOnClickListener { searchPlace() }
+        findViewById<View>(R.id.btnSaveFavorite).setOnClickListener { showSaveFavoriteDialog() }
+        renderFavorites()
         findViewById<View>(R.id.btnUseLocation).setOnClickListener {
             val point = selected
             if (point == null) {
@@ -90,6 +97,83 @@ class MapPickerActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+
+    private fun loadFavorites(): JSONArray {
+        return try {
+            JSONArray(favPrefs.getString("map_favorites", "[]"))
+        } catch (e: Exception) {
+            JSONArray()
+        }
+    }
+
+    private fun saveFavorites(array: JSONArray) {
+        favPrefs.edit().putString("map_favorites", array.toString()).apply()
+    }
+
+    private fun renderFavorites() {
+        val container = findViewById<LinearLayout>(R.id.favContainer)
+        container.removeAllViews()
+        val favorites = loadFavorites()
+        for (i in 0 until favorites.length()) {
+            val item = favorites.getJSONObject(i)
+            val button = com.google.android.material.button.MaterialButton(this).apply {
+                text = item.optString("name", "Lokasi ${i + 1}")
+                isSingleLine = true
+                layoutParams = LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT, 130
+                ).apply { marginEnd = 16 }
+                setOnClickListener {
+                    setPoint(GeoPoint(item.optDouble("lat"), item.optDouble("lng")))
+                }
+                setOnLongClickListener {
+                    AlertDialog.Builder(this@MapPickerActivity)
+                        .setTitle(text)
+                        .setMessage("Hapus lokasi favorit ini?")
+                        .setPositiveButton("Hapus") { _, _ ->
+                            val current = loadFavorites()
+                            current.remove(i)
+                            saveFavorites(current)
+                            renderFavorites()
+                        }
+                        .setNegativeButton("Batal", null)
+                        .show()
+                    true
+                }
+            }
+            container.addView(button)
+        }
+    }
+
+    private fun showSaveFavoriteDialog() {
+        val point = selected
+        if (point == null) {
+            Toast.makeText(this, "Pilih titik dulu", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val input = EditText(this).apply { hint = getString(R.string.fav_name_hint); setSingleLine(true) }
+        AlertDialog.Builder(this)
+            .setTitle(R.string.fav_save_title)
+            .setView(input)
+            .setPositiveButton("Simpan") { _, _ ->
+                val name = input.text.toString().trim()
+                if (name.isBlank()) {
+                    Toast.makeText(this, "Nama tidak boleh kosong", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+                val favorites = loadFavorites()
+                val item = JSONObject().apply {
+                    put("name", name)
+                    put("lat", point.latitude)
+                    put("lng", point.longitude)
+                }
+                favorites.put(item)
+                saveFavorites(favorites)
+                renderFavorites()
+                Toast.makeText(this, "Tersimpan: $name", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Batal", null)
+            .show()
     }
 
     private fun setPoint(point: GeoPoint) {

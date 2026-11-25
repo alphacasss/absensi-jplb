@@ -23,8 +23,8 @@ android {
         applicationId = "id.jplb.absensi"
         minSdk = 21
         targetSdk = 34
-        versionCode = 4
-        versionName = "1.2.1"
+        versionCode = 5
+        versionName = "1.2.2"
     }
 
     signingConfigs {

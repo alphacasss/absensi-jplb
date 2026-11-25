@@ -46,4 +46,7 @@
     <string name="map_use">Pakai Lokasi Ini</string>
     <string name="map_selected">Lokasi dipilih</string>
     <string name="mock_pick_map">Pilih di Peta</string>
+    <string name="fav_save">Simpan</string>
+    <string name="fav_name_hint">Nama lokasi, mis. Gudang</string>
+    <string name="fav_save_title">Simpan lokasi favorit</string>
 </resources>

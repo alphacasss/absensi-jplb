@@ -39,6 +39,8 @@ Fitur ini diadaptasi dari [lilstiffy/MockGps](https://github.com/lilstiffy/MockG
 tanpa Google Maps/API key. Pemilih peta memakai osmdroid + tile OpenStreetMap, pencarian nama tempat via Nominatim. Cara pakai:
 1. Buka menu **Mode Uji (Mock Location)** di home.
 2. Isi latitude & longitude manual, atau tekan **Pilih di Peta** untuk memilih titik/ketik nama tempat (pencarian Nominatim, OpenStreetMap tanpa API key).
+   - Tekan **Simpan** untuk menyimpan titik sebagai lokasi favorit (disimpan lokal).
+   - Chip favorit sekali klik langsung dipakai; long-press chip untuk menghapus.
 3. Jika diminta, di *Developer options → Mock location app / Select mock location app*, pilih aplikasi ini.
 4. Tekan **Hentikan Mock** untuk kembali ke GPS asli.
 
