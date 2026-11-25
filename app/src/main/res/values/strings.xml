@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Absensi Gudang JPLB</string>
+    <string name="url_host">script.google.com</string>
+    <string name="error_title">Koneksi bermasalah</string>
+    <string name="retry">Coba lagi</string>
+    <string name="nav_back">Kembali</string>
+    <string name="nav_forward">Maju</string>
+    <string name="nav_home">Beranda</string>
+    <string name="nav_reload">Muat ulang</string>
+    <string name="menu_reload">Muat ulang</string>
+    <string name="menu_browser">Buka di Chrome</string>
+    <string name="menu_change_url">Ganti URL</string>
+    <string name="menu_share">Bagikan</string>
+    <string name="menu_about">Tentang</string>
+    <string name="branch_name">Cabang Nusa Tenggara Barat</string>
+    <string name="status_connected">Terhubung dengan Chrome</string>
+    <string name="status_no_chrome">Chrome tidak ditemukan</string>
+    <string name="browser_chrome">Google Chrome</string>
+    <string name="browser_webview">WebView</string>
+    <string name="auth_title">Otorisasi perangkat</string>
+    <string name="auth_desc_chrome">ID perangkat dan otorisasi dibaca langsung dari profil Google Chrome. Tidak perlu mendaftar ulang saat membuka absensi.</string>
+    <string name="auth_desc_other">Browser lain terdeteksi. Otorisasi Chrome tidak dapat dibaca otomatis; lakukan identifikasi sekali jika halaman memintanya.</string>
+    <string name="auth_desc_webview">Browser tidak tersedia. Mode WebView dipakai; perangkat perlu didaftarkan sekali lewat nomor HP dan persetujuan admin.</string>
+    <string name="status_other_browser">Browser lain tersedia</string>
+    <string name="status_no_browser">Mode WebView aktif</string>
+    <string name="browser_label">Browser</string>
+    <string name="open_absensi">BUKA ABSENSI</string>
+    <string name="open_browser">Buka di Chrome biasa</string>
+    <string name="webview_mode">Mode WebView (tanpa Chrome)</string>
+    <string name="note_chrome">Otorisasi mengikuti data Chrome. Jangan hapus data Chrome agar status perangkat tetap terdaftar.</string>
+</resources>
